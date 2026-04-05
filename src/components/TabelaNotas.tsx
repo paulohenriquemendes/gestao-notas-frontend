@@ -87,6 +87,7 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
                             Detalhes da nota
                           </h3>
                           <div className="mt-3 grid gap-2 text-sm text-slate-700">
+                            <p><strong>Cadastrada por:</strong> {nota.criadoPorNome}</p>
                             <p><strong>Cliente:</strong> {nota.cliente}</p>
                             <p><strong>Destinatário:</strong> {nota.destinatario}</p>
                             <p><strong>Observações:</strong> {nota.observacoes || "Sem observações."}</p>
