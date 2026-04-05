@@ -1,19 +1,29 @@
 import { FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { login, salvarToken } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { cadastrar, login, salvarToken } from "../services/api";
 
 /**
- * Exibe o formulário de login e autentica o usuário na API.
+ * Exibe a primeira tela do sistema com login e cadastro no mesmo fluxo.
  */
 export function Login() {
   const navigate = useNavigate();
+  const [modoCadastro, setModoCadastro] = useState(false);
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
   /**
-   * Envia as credenciais para a API e redireciona para o dashboard em caso de sucesso.
+   * Alterna entre o modo de entrada e o modo de cadastro sem sair da primeira tela.
+   */
+  function alternarModo() {
+    setErro("");
+    setModoCadastro((valorAtual) => !valorAtual);
+  }
+
+  /**
+   * Envia os dados para login ou cadastro e abre o dashboard após sucesso.
    */
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -21,11 +31,14 @@ export function Login() {
     setLoading(true);
 
     try {
-      const response = await login({ email, senha });
+      const response = modoCadastro
+        ? await cadastrar({ nome, email, senha })
+        : await login({ email, senha });
+
       salvarToken(response.token);
       navigate("/");
     } catch (error) {
-      setErro(error instanceof Error ? error.message : "Não foi possível entrar.");
+      setErro(error instanceof Error ? error.message : "Não foi possível concluir o acesso.");
     } finally {
       setLoading(false);
     }
@@ -40,13 +53,41 @@ export function Login() {
           <p className="mt-4 text-slate-300">
             Visualize entregas, destino final e prioridade em uma única central de decisão.
           </p>
+
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+            <p className="text-sm font-semibold text-white">Cadastro de usuário apenas no início</p>
+            <p className="mt-2 text-sm text-slate-300">
+              A criação de usuário fica somente nesta primeira tela. Depois do acesso, a navegação fica
+              dedicada ao controle das notas fiscais.
+            </p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">Entrar</h2>
-            <p className="mt-1 text-sm text-slate-500">Use seu e-mail e senha para acessar o dashboard.</p>
+            <h2 className="text-2xl font-bold text-slate-900">
+              {modoCadastro ? "Criar acesso inicial" : "Entrar"}
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              {modoCadastro
+                ? "Cadastre um usuário e entre no sistema sem sair desta tela."
+                : "Use seu e-mail e senha para acessar o dashboard."}
+            </p>
           </div>
+
+          {modoCadastro ? (
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Nome</label>
+              <input
+                type="text"
+                value={nome}
+                onChange={(event) => setNome(event.target.value)}
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-brand-500"
+                placeholder="Seu nome"
+                required={modoCadastro}
+              />
+            </div>
+          ) : null}
 
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">E-mail</label>
@@ -79,15 +120,16 @@ export function Login() {
             disabled={loading}
             className="w-full rounded-xl bg-brand-500 px-4 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-70"
           >
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? "Processando..." : modoCadastro ? "Cadastrar e entrar" : "Entrar"}
           </button>
 
-          <p className="text-sm text-slate-500">
-            Ainda não possui conta?{" "}
-            <Link to="/cadastro" className="font-semibold text-brand-700">
-              Criar cadastro
-            </Link>
-          </p>
+          <button
+            type="button"
+            onClick={alternarModo}
+            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            {modoCadastro ? "Já tenho conta" : "Ainda não tenho conta"}
+          </button>
         </form>
       </div>
     </section>

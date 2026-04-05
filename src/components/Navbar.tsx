@@ -30,9 +30,9 @@ export function Navbar({ isAuthenticated }: NavbarProps) {
           <div className="flex items-center gap-3">
             <Link
               to="/notas/nova"
-              className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+              className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700"
             >
-              Nova nota
+              Cadastrar nota
             </Link>
             <button
               type="button"
@@ -42,16 +42,7 @@ export function Navbar({ isAuthenticated }: NavbarProps) {
               Sair
             </button>
           </div>
-        ) : (
-          <div className="flex gap-2 text-sm font-medium">
-            <Link to="/login" className="text-slate-600 hover:text-brand-700">
-              Login
-            </Link>
-            <Link to="/cadastro" className="text-slate-600 hover:text-brand-700">
-              Cadastro
-            </Link>
-          </div>
-        )}
+        ) : null}
       </div>
     </header>
   );

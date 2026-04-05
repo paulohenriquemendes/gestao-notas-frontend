@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { CardResumo } from "../components/CardResumo";
 import { GraficoSimples } from "../components/GraficoSimples";
 import { TabelaNotas } from "../components/TabelaNotas";
@@ -13,7 +14,7 @@ const resumoInicial: DashboardResumo = {
 };
 
 /**
- * Exibe o painel principal com resumo, filtros, gráfico e tabela de notas fiscais.
+ * Exibe o painel principal com foco na tabela e nos detalhes operacionais das notas.
  */
 export function Dashboard() {
   const [periodo, setPeriodo] = useState("todos");
@@ -65,15 +66,25 @@ export function Dashboard() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8">
-      <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Dashboard de notas fiscais</h1>
-          <p className="mt-2 text-slate-600">
-            Visualize prioridades por cor para agir antes da chegada do motorista.
-          </p>
+      <div className="mb-8 rounded-3xl bg-white p-6 shadow-soft">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
+          <div className="max-w-3xl">
+            <h1 className="text-3xl font-bold text-slate-900">Dashboard de notas fiscais</h1>
+            <p className="mt-2 text-slate-600">
+              A leitura principal agora começa pela lista de notas, para deixar número, cliente, destino e
+              prazo sempre visíveis logo no topo da operação.
+            </p>
+          </div>
+
+          <Link
+            to="/notas/nova"
+            className="inline-flex items-center justify-center rounded-xl bg-brand-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
+          >
+            Cadastrar nova nota
+          </Link>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_1fr_auto]">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">Período</label>
             <select
@@ -102,31 +113,24 @@ export function Dashboard() {
               <option value="dentroPrazo">Dentro do prazo</option>
             </select>
           </div>
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+            <strong className="block text-slate-900">Ação rápida</strong>
+            O botão de cadastro de nota fica fixo no topo para reduzir a confusão na operação.
+          </div>
         </div>
       </div>
 
       {erro ? <p className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{erro}</p> : null}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <CardResumo titulo="Atrasadas" valor={resumo.atrasadas} destaque="bg-red-100 text-red-700" />
         <CardResumo titulo="Vencendo" valor={resumo.vencendo} destaque="bg-orange-100 text-orange-700" />
         <CardResumo titulo="No prazo" valor={resumo.noPrazo} destaque="bg-green-100 text-green-700" />
         <CardResumo titulo="Total" valor={resumo.total} destaque="bg-slate-100 text-slate-700" />
       </div>
 
-      <div className="mt-8 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <GraficoSimples resumo={resumo} />
-
-        <div className="rounded-2xl border border-white/70 bg-white p-5 shadow-soft">
-          <h2 className="text-lg font-semibold text-slate-900">Leitura operacional</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Vermelho indica atraso. Laranja representa notas que vencem hoje ou amanhã. Amarelo sinaliza
-            vencimento em até três dias. Verde mostra o que ainda está confortável dentro do prazo.
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-8">
+      <div className="mb-8">
         {loading ? (
           <div className="rounded-2xl bg-white p-8 text-center text-slate-500 shadow-soft">
             Carregando notas fiscais...
@@ -134,6 +138,17 @@ export function Dashboard() {
         ) : (
           <TabelaNotas notas={notas} onDelete={handleDelete} />
         )}
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-2xl border border-white/70 bg-white p-5 shadow-soft">
+          <h2 className="text-lg font-semibold text-slate-900">Entenda as prioridades</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Vermelho indica atraso. Laranja representa notas que vencem hoje ou amanhã. Amarelo sinaliza
+            vencimento em até três dias. Verde mostra o que ainda está confortável dentro do prazo.
+          </p>
+        </div>
+        <GraficoSimples resumo={resumo} />
       </div>
     </section>
   );
