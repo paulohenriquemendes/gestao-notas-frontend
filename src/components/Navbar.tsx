@@ -28,12 +28,6 @@ export function Navbar({ isAuthenticated }: NavbarProps) {
 
         {isAuthenticated ? (
           <div className="flex items-center gap-3">
-            <Link
-              to="/notas/nova"
-              className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700"
-            >
-              Cadastrar nota
-            </Link>
             <button
               type="button"
               onClick={handleLogout}

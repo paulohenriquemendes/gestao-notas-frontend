@@ -1,4 +1,11 @@
-import { AuthResponse, DashboardResponse, NotaFiscal, NotaPayload } from "../types";
+import {
+  AuthProfile,
+  AuthResponse,
+  DashboardResponse,
+  NotaFiscal,
+  NotaPayload,
+  SugestoesResponse,
+} from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333/api";
 
@@ -30,7 +37,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = obterToken();
   const headers = new Headers(options.headers);
 
-  headers.set("Content-Type", "application/json");
+  if (!(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
 
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
@@ -48,6 +57,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (response.status === 204) {
     return undefined as T;
+  }
+
+  const contentType = response.headers.get("Content-Type") ?? "";
+
+  if (contentType.includes("text/csv")) {
+    return (await response.text()) as T;
   }
 
   return (await response.json()) as T;
@@ -78,21 +93,75 @@ export function login(payload: { email: string; senha: string }): Promise<AuthRe
 }
 
 /**
+ * Solicita um token interno para recuperação de senha.
+ */
+export function forgotPassword(payload: { email: string }): Promise<{
+  message: string;
+  resetToken: string;
+  expiresAt: string;
+}> {
+  return request("/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Redefine a senha com base em um token temporário.
+ */
+export function resetPassword(payload: { token: string; novaSenha: string }): Promise<{ message: string }> {
+  return request("/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Carrega o perfil do usuário autenticado.
+ */
+export function obterPerfil(): Promise<AuthProfile> {
+  return request<AuthProfile>("/auth/profile");
+}
+
+/**
  * Busca os dados do dashboard conforme os filtros selecionados.
  */
-export function listarNotas(periodo: string, status: string): Promise<DashboardResponse> {
-  const params = new URLSearchParams();
+export function listarNotas(params: {
+  periodo: string;
+  status: string;
+  busca: string;
+  page: number;
+  pageSize: number;
+  sortBy: "urgencia" | "prazo" | "cliente" | "chegada";
+  sortOrder: "asc" | "desc";
+}): Promise<DashboardResponse> {
+  const query = new URLSearchParams();
 
-  if (periodo && periodo !== "todos") {
-    params.set("periodo", periodo);
+  Object.entries(params).forEach(([chave, valor]) => {
+    if (valor !== "" && valor !== "todos") {
+      query.set(chave, String(valor));
+    }
+  });
+
+  if (params.page) {
+    query.set("page", String(params.page));
   }
 
-  if (status && status !== "todos") {
-    params.set("status", status);
+  if (params.pageSize) {
+    query.set("pageSize", String(params.pageSize));
   }
 
-  const query = params.toString();
-  return request<DashboardResponse>(`/notas${query ? `?${query}` : ""}`);
+  query.set("sortBy", params.sortBy);
+  query.set("sortOrder", params.sortOrder);
+
+  return request<DashboardResponse>(`/notas?${query.toString()}`);
+}
+
+/**
+ * Busca sugestões de preenchimento para cliente e destinatário.
+ */
+export function obterSugestoes(): Promise<SugestoesResponse> {
+  return request<SugestoesResponse>("/notas/sugestoes");
 }
 
 /**
@@ -129,4 +198,28 @@ export function excluirNota(id: string): Promise<void> {
   return request<void>(`/notas/${id}`, {
     method: "DELETE",
   });
+}
+
+/**
+ * Exporta as notas filtradas em formato CSV.
+ */
+export function exportarNotas(params: {
+  periodo: string;
+  status: string;
+  busca: string;
+  sortBy: "urgencia" | "prazo" | "cliente" | "chegada";
+  sortOrder: "asc" | "desc";
+}): Promise<string> {
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([chave, valor]) => {
+    if (valor !== "" && valor !== "todos") {
+      query.set(chave, String(valor));
+    }
+  });
+
+  query.set("sortBy", params.sortBy);
+  query.set("sortOrder", params.sortOrder);
+
+  return request<string>(`/notas/exportar?${query.toString()}`);
 }
