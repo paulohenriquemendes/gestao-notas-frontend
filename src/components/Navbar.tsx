@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import logoEmpresa from "../assets/logo-empresa.svg";
 import { limparToken } from "../services/api";
+import { mostrarNotificacao } from "../services/notifications";
 
 interface NavbarProps {
   isAuthenticated: boolean;
@@ -17,7 +18,8 @@ export function Navbar({ isAuthenticated }: NavbarProps) {
    */
   function handleLogout() {
     limparToken();
-    navigate("/login");
+    mostrarNotificacao("Sessao encerrada com sucesso.", "info");
+    navigate("/login", { replace: true });
   }
 
   return (

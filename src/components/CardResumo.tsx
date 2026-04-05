@@ -9,7 +9,7 @@ interface CardResumoProps {
  */
 export function CardResumo({ titulo, valor, destaque }: CardResumoProps) {
   return (
-    <div className="rounded-2xl border border-white/70 bg-white p-5 shadow-soft">
+    <div className="rounded-2xl border border-brand-100/70 bg-white/95 p-5 shadow-soft">
       <p className="text-sm font-medium text-slate-500">{titulo}</p>
       <div className="mt-3 flex items-end justify-between">
         <strong className="text-3xl text-slate-900">{valor}</strong>

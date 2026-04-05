@@ -32,7 +32,7 @@ export function GraficoSimples({ resumo }: GraficoSimplesProps) {
   const dados = montarDados(resumo);
 
   return (
-    <div className="rounded-2xl border border-white/70 bg-white p-5 shadow-soft">
+    <div className="rounded-2xl border border-brand-100/70 bg-white/95 p-5 shadow-soft">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-slate-900">Distribuição por status</h2>
         <p className="text-sm text-slate-500">Visão rápida da criticidade atual das notas fiscais.</p>

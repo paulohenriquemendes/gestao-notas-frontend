@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoEmpresa from "../assets/logo-empresa.svg";
 import { cadastrar, forgotPassword, login, resetPassword, salvarToken } from "../services/api";
+import { mostrarNotificacao } from "../services/notifications";
 
 /**
  * Exibe a primeira tela do sistema com login, cadastro e recuperação de senha.
@@ -54,6 +55,7 @@ export function Login() {
         : await login({ email, senha });
 
       salvarToken(response.token);
+      mostrarNotificacao(modoCadastro ? "Acesso criado e login realizado." : "Login realizado com sucesso.");
       navigate("/");
     } catch (error) {
       setErro(error instanceof Error ? error.message : "Não foi possível concluir o acesso.");
@@ -75,6 +77,7 @@ export function Login() {
       const response = await forgotPassword({ email });
       setTokenRecuperacao(response.resetToken);
       setMensagem(`Token gerado com sucesso. Expira em ${new Date(response.expiresAt).toLocaleString("pt-BR")}.`);
+      mostrarNotificacao("Token de recuperacao gerado com sucesso.");
     } catch (error) {
       setErro(error instanceof Error ? error.message : "Não foi possível gerar o token.");
     } finally {
@@ -94,6 +97,7 @@ export function Login() {
     try {
       const response = await resetPassword({ token: tokenRecuperacao, novaSenha });
       setMensagem(response.message);
+      mostrarNotificacao("Senha redefinida com sucesso.");
       setModoRecuperacao(false);
       setSenha("");
       setNovaSenha("");

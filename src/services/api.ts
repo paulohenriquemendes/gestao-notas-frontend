@@ -8,6 +8,7 @@ import {
 } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333/api";
+const AUTH_EVENT = "gestao-notas-auth-change";
 
 /**
  * Lê o token salvo no navegador para autenticar as requisições protegidas.
@@ -21,6 +22,7 @@ export function obterToken(): string | null {
  */
 export function salvarToken(token: string): void {
   localStorage.setItem("gestao-notas-token", token);
+  window.dispatchEvent(new Event(AUTH_EVENT));
 }
 
 /**
@@ -28,6 +30,14 @@ export function salvarToken(token: string): void {
  */
 export function limparToken(): void {
   localStorage.removeItem("gestao-notas-token");
+  window.dispatchEvent(new Event(AUTH_EVENT));
+}
+
+/**
+ * Informa o nome do evento usado para sincronizar login e logout na interface.
+ */
+export function obterEventoAuth(): string {
+  return AUTH_EVENT;
 }
 
 /**

@@ -1,10 +1,11 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
+import { ToastContainer } from "./components/ToastContainer";
 import { Dashboard } from "./pages/Dashboard";
 import { Login } from "./pages/Login";
 import { NotaForm } from "./pages/NotaForm";
-import { obterToken } from "./services/api";
+import { obterEventoAuth, obterToken } from "./services/api";
 
 interface ProtectedRouteProps {
   children: ReactElement;
@@ -27,10 +28,25 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
  * Organiza as rotas principais do frontend.
  */
 export default function App() {
-  const isAuthenticated = Boolean(obterToken());
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(obterToken()));
+
+  useEffect(() => {
+    const syncAuth = () => {
+      setIsAuthenticated(Boolean(obterToken()));
+    };
+
+    window.addEventListener(obterEventoAuth(), syncAuth);
+    window.addEventListener("storage", syncAuth);
+
+    return () => {
+      window.removeEventListener(obterEventoAuth(), syncAuth);
+      window.removeEventListener("storage", syncAuth);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen">
+      <ToastContainer />
       <Navbar isAuthenticated={isAuthenticated} />
 
       <Routes>

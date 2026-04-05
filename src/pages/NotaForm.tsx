@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { atualizarNota, criarNota, obterNota, obterSugestoes } from "../services/api";
+import { mostrarNotificacao } from "../services/notifications";
 import { formatarParaInput } from "../utils/dateUtils";
 
 const estadoInicial = {
@@ -107,6 +108,7 @@ export function NotaForm() {
         await criarNota(form);
       }
 
+      mostrarNotificacao(id ? "Nota atualizada com sucesso." : "Nota cadastrada com sucesso.");
       navigate("/");
     } catch (error) {
       setErro(error instanceof Error ? error.message : "Nao foi possivel salvar a nota.");

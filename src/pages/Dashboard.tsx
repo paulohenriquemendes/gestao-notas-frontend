@@ -4,6 +4,7 @@ import { CardResumo } from "../components/CardResumo";
 import { GraficoSimples } from "../components/GraficoSimples";
 import { TabelaNotas } from "../components/TabelaNotas";
 import { excluirNota, exportarNotas, listarNotas } from "../services/api";
+import { mostrarNotificacao } from "../services/notifications";
 import { DashboardAlerta, DashboardPaginacao, DashboardResumo, NotaFiscal } from "../types";
 
 const resumoInicial: DashboardResumo = {
@@ -151,8 +152,10 @@ export function Dashboard() {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+      mostrarNotificacao(`Exportacao ${formato.toUpperCase()} concluida com sucesso.`);
     } catch (error) {
       setErro(error instanceof Error ? error.message : "Nao foi possivel exportar as notas.");
+      mostrarNotificacao("Nao foi possivel exportar as notas.", "error");
     } finally {
       setExportando("");
     }
@@ -171,8 +174,10 @@ export function Dashboard() {
     try {
       await excluirNota(id);
       await carregarDashboard();
+      mostrarNotificacao("Nota excluida com sucesso.");
     } catch (error) {
       setErro(error instanceof Error ? error.message : "Nao foi possivel excluir a nota.");
+      mostrarNotificacao("Nao foi possivel excluir a nota.", "error");
     }
   }
 
@@ -182,7 +187,7 @@ export function Dashboard() {
 
   return (
     <section className="mx-auto w-full max-w-[1800px] px-6 py-8 xl:px-10 2xl:px-12">
-      <div className="mb-8 rounded-3xl bg-white p-6 shadow-soft">
+      <div className="mb-8 rounded-3xl border border-brand-100/70 bg-white/95 p-6 shadow-soft">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
           <div className="max-w-3xl">
             <h1 className="text-3xl font-bold text-slate-900">Dashboard de notas fiscais</h1>
@@ -253,7 +258,7 @@ export function Dashboard() {
         <CardResumo titulo="Total" valor={resumo.total} destaque="bg-slate-100 text-slate-700" />
       </div>
 
-      <div className="mb-3 rounded-2xl bg-white p-4 shadow-soft">
+      <div className="mb-3 rounded-2xl border border-brand-100/70 bg-white/95 p-4 shadow-soft">
         <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
           <div>
             <label className="mb-1 block text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
@@ -344,7 +349,7 @@ export function Dashboard() {
         )}
       </div>
 
-      <div className="mb-8 flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-soft">
+      <div className="mb-8 flex items-center justify-between rounded-2xl border border-brand-100/70 bg-white/95 px-4 py-3 shadow-soft">
         <p className="text-sm text-slate-600">
           Pagina {paginacao.page} de {paginacao.totalPages} • {paginacao.totalItems} notas encontradas
         </p>
@@ -369,7 +374,7 @@ export function Dashboard() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-2xl border border-white/70 bg-white p-5 shadow-soft">
+        <div className="rounded-2xl border border-brand-100/70 bg-white/95 p-5 shadow-soft">
           <h2 className="text-lg font-semibold text-slate-900">Entenda as prioridades</h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             Vermelho indica atraso. Laranja representa notas que vencem hoje ou amanha. Amarelo
