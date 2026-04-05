@@ -7,13 +7,14 @@ const estadoInicial = {
   numero: "",
   cliente: "",
   destinatario: "",
+  observacoes: "",
   dataEmissao: "",
   dataChegada: "",
   dataLimite: "",
 };
 
 /**
- * Exibe o formulário de criação e edição de notas fiscais.
+ * Exibe o formulario de criacao e edicao de notas fiscais.
  */
 export function NotaForm() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export function NotaForm() {
   const [sugestoesDestinatario, setSugestoesDestinatario] = useState<string[]>([]);
 
   /**
-   * Atualiza um campo específico do formulário sem perder o restante do estado.
+   * Atualiza um campo especifico do formulario sem perder o restante do estado.
    */
   function handleChange(campo: keyof typeof estadoInicial, valor: string) {
     setForm((prev) => ({
@@ -36,20 +37,20 @@ export function NotaForm() {
   }
 
   /**
-   * Valida regras de preenchimento do formulário para evitar erros operacionais.
+   * Valida regras de preenchimento do formulario para evitar erros operacionais.
    */
   function validarFormulario() {
     if (new Date(form.dataChegada) < new Date(form.dataEmissao)) {
-      throw new Error("A data de chegada não pode ser anterior à emissão.");
+      throw new Error("A data de chegada nao pode ser anterior a emissao.");
     }
 
     if (new Date(form.dataLimite) < new Date(form.dataChegada)) {
-      throw new Error("A data limite não pode ser anterior à data de chegada.");
+      throw new Error("A data limite nao pode ser anterior a data de chegada.");
     }
   }
 
   /**
-   * Carrega sugestões automáticas de clientes e destinatários já utilizados.
+   * Carrega sugestoes automaticas de clientes e destinatarios ja utilizados.
    */
   async function carregarSugestoes() {
     try {
@@ -63,7 +64,7 @@ export function NotaForm() {
   }
 
   /**
-   * Carrega a nota existente quando a página é usada em modo de edição.
+   * Carrega a nota existente quando a pagina e usada em modo de edicao.
    */
   async function carregarNota() {
     if (!id) {
@@ -77,19 +78,20 @@ export function NotaForm() {
         numero: nota.numero,
         cliente: nota.cliente,
         destinatario: nota.destinatario,
+        observacoes: nota.observacoes ?? "",
         dataEmissao: formatarParaInput(nota.dataEmissao),
         dataChegada: formatarParaInput(nota.dataChegada),
         dataLimite: formatarParaInput(nota.dataLimite),
       });
     } catch (error) {
-      setErro(error instanceof Error ? error.message : "Não foi possível carregar a nota.");
+      setErro(error instanceof Error ? error.message : "Nao foi possivel carregar a nota.");
     } finally {
       setCarregando(false);
     }
   }
 
   /**
-   * Envia os dados do formulário para criar ou atualizar a nota fiscal.
+   * Envia os dados do formulario para criar ou atualizar a nota fiscal.
    */
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -107,27 +109,27 @@ export function NotaForm() {
 
       navigate("/");
     } catch (error) {
-      setErro(error instanceof Error ? error.message : "Não foi possível salvar a nota.");
+      setErro(error instanceof Error ? error.message : "Nao foi possivel salvar a nota.");
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    carregarSugestoes();
-    carregarNota();
+    void carregarSugestoes();
+    void carregarNota();
   }, [id]);
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-8">
+    <section className="mx-auto w-full max-w-[1600px] px-6 py-8 xl:px-10 2xl:px-12">
       <div className="rounded-3xl bg-white p-8 shadow-soft">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">
             {id ? "Editar nota fiscal" : "Cadastrar nota fiscal"}
           </h1>
           <p className="mt-2 text-slate-500">
-            Use sugestões automáticas e validações de prazo para preencher a nota com mais velocidade e
-            menos erro operacional.
+            Use sugestoes automaticas, observacoes opcionais e validacoes de prazo para preencher a
+            nota com mais velocidade e menos erro operacional.
           </p>
         </div>
 
@@ -138,7 +140,7 @@ export function NotaForm() {
         ) : (
           <form onSubmit={handleSubmit} className="grid gap-5 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Número da nota fiscal</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Numero da nota fiscal</label>
               <input
                 type="text"
                 value={form.numero}
@@ -166,7 +168,7 @@ export function NotaForm() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm font-medium text-slate-700">Destinatário final</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Destinatario final</label>
               <input
                 list="destinatarios-sugeridos"
                 type="text"
@@ -182,8 +184,18 @@ export function NotaForm() {
               </datalist>
             </div>
 
+            <div className="md:col-span-2">
+              <label className="mb-2 block text-sm font-medium text-slate-700">Observacoes / detalhes</label>
+              <textarea
+                value={form.observacoes}
+                onChange={(event) => handleChange("observacoes", event.target.value)}
+                className="min-h-[120px] w-full rounded-xl border border-slate-300 px-4 py-3"
+                placeholder="Campo opcional para registrar detalhes adicionais da nota."
+              />
+            </div>
+
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Data de emissão</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Data de emissao</label>
               <input
                 type="date"
                 value={form.dataEmissao}
@@ -216,9 +228,9 @@ export function NotaForm() {
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 md:col-span-2">
-              <strong className="block text-slate-900">Dicas para preenchimento rápido</strong>
-              O sistema reaproveita clientes e destinatários já cadastrados. O prazo precisa ser igual ou
-              posterior à data de chegada.
+              <strong className="block text-slate-900">Dicas para preenchimento rapido</strong>
+              O sistema reaproveita clientes e destinatarios ja cadastrados. O prazo precisa ser igual ou
+              posterior a data de chegada. Use observacoes para registrar orientacoes operacionais.
             </div>
 
             <div className="flex items-end justify-end gap-3 md:col-span-2">
@@ -234,7 +246,7 @@ export function NotaForm() {
                 disabled={loading}
                 className="rounded-xl bg-brand-500 px-5 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-70"
               >
-                {loading ? "Salvando..." : id ? "Salvar alterações" : "Criar nota"}
+                {loading ? "Salvando..." : id ? "Salvar alteracoes" : "Criar nota"}
               </button>
             </div>
           </form>

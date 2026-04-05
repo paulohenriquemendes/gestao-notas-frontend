@@ -30,13 +30,13 @@ const opcoesStatus = [
   { valor: "todos", rotulo: "Todos" },
   { valor: "atrasada", rotulo: "Atrasadas" },
   { valor: "venceHoje", rotulo: "Hoje" },
-  { valor: "venceAmanha", rotulo: "Amanhã" },
-  { valor: "venceEm3Dias", rotulo: "Até 3 dias" },
+  { valor: "venceAmanha", rotulo: "Amanha" },
+  { valor: "venceEm3Dias", rotulo: "Ate 3 dias" },
   { valor: "dentroPrazo", rotulo: "No prazo" },
 ];
 
 /**
- * Exibe o painel principal com busca, alertas, paginação e ordenação operacional.
+ * Exibe o painel principal com filtros, tabela operacional e exportacoes.
  */
 export function Dashboard() {
   const [periodo, setPeriodo] = useState("todos");
@@ -50,6 +50,7 @@ export function Dashboard() {
   const [resumo, setResumo] = useState<DashboardResumo>(resumoInicial);
   const [paginacao, setPaginacao] = useState<DashboardPaginacao>(paginacaoInicial);
   const [loading, setLoading] = useState(true);
+  const [exportando, setExportando] = useState<"" | "pdf" | "csv" | "excel">("");
   const [erro, setErro] = useState("");
 
   /**
@@ -82,14 +83,14 @@ export function Dashboard() {
       setAlertas(response.alertas);
       setPaginacao(response.paginacao);
     } catch (error) {
-      setErro(error instanceof Error ? error.message : "Não foi possível carregar o dashboard.");
+      setErro(error instanceof Error ? error.message : "Nao foi possivel carregar o dashboard.");
     } finally {
       setLoading(false);
     }
   }
 
   /**
-   * Atualiza o filtro de período e recarrega imediatamente.
+   * Atualiza o filtro de periodo e recarrega imediatamente.
    */
   async function selecionarPeriodo(novoPeriodo: string) {
     setPeriodo(novoPeriodo);
@@ -107,7 +108,7 @@ export function Dashboard() {
   }
 
   /**
-   * Atualiza a busca textual com resposta dinâmica.
+   * Atualiza a busca textual com resposta dinamica.
    */
   async function handleBusca(valor: string) {
     setBusca(valor);
@@ -116,7 +117,7 @@ export function Dashboard() {
   }
 
   /**
-   * Atualiza a ordenação da listagem.
+   * Atualiza a ordenacao da listagem.
    */
   async function atualizarOrdenacao(
     novoSortBy: "urgencia" | "prazo" | "cliente" | "chegada",
@@ -128,7 +129,7 @@ export function Dashboard() {
   }
 
   /**
-   * Navega entre páginas.
+   * Navega entre paginas.
    */
   async function irParaPagina(novaPagina: number) {
     setPage(novaPagina);
@@ -136,22 +137,24 @@ export function Dashboard() {
   }
 
   /**
-   * Exporta as notas filtradas para CSV.
+   * Exporta as notas filtradas no formato selecionado.
    */
-  async function handleExportar() {
+  async function handleExportar(formato: "pdf" | "csv" | "excel") {
     try {
-      const csv = await exportarNotas({ periodo, status, busca, sortBy, sortOrder });
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = window.URL.createObjectURL(blob);
+      setExportando(formato);
+      const arquivo = await exportarNotas({ periodo, status, busca, sortBy, sortOrder, formato });
+      const url = window.URL.createObjectURL(arquivo.blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "notas-fiscais.csv");
+      link.setAttribute("download", arquivo.fileName);
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      setErro(error instanceof Error ? error.message : "Não foi possível exportar as notas.");
+      setErro(error instanceof Error ? error.message : "Nao foi possivel exportar as notas.");
+    } finally {
+      setExportando("");
     }
   }
 
@@ -169,7 +172,7 @@ export function Dashboard() {
       await excluirNota(id);
       await carregarDashboard();
     } catch (error) {
-      setErro(error instanceof Error ? error.message : "Não foi possível excluir a nota.");
+      setErro(error instanceof Error ? error.message : "Nao foi possivel excluir a nota.");
     }
   }
 
@@ -178,25 +181,45 @@ export function Dashboard() {
   }, []);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-8">
+    <section className="mx-auto w-full max-w-[1800px] px-6 py-8 xl:px-10 2xl:px-12">
       <div className="mb-8 rounded-3xl bg-white p-6 shadow-soft">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
           <div className="max-w-3xl">
             <h1 className="text-3xl font-bold text-slate-900">Dashboard de notas fiscais</h1>
             <p className="mt-2 text-slate-600">
-              Agora as notas aparecem ordenadas por urgência, com busca textual, alertas internos e
-              navegação paginada para escalar melhor a operação.
+              As notas aparecem por urgencia, com busca textual, alertas internos, navegacao paginada
+              e exportacao pronta para reunioes e conferencias operacionais.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={handleExportar}
-              className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-              Exportar CSV
-            </button>
+            <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">
+              <button
+                type="button"
+                onClick={() => void handleExportar("pdf")}
+                disabled={exportando !== ""}
+                className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-60"
+              >
+                {exportando === "pdf" ? "Gerando PDF..." : "Exportar PDF"}
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleExportar("csv")}
+                disabled={exportando !== ""}
+                className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:opacity-60"
+              >
+                CSV
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleExportar("excel")}
+                disabled={exportando !== ""}
+                className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:opacity-60"
+              >
+                Excel
+              </button>
+            </div>
+
             <Link
               to="/notas/nova"
               className="inline-flex items-center justify-center rounded-xl bg-brand-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
@@ -211,7 +234,7 @@ export function Dashboard() {
 
       {alertas.length > 0 ? (
         <div className="mb-6 rounded-2xl border border-red-100 bg-red-50 p-4">
-          <p className="text-sm font-semibold uppercase tracking-[0.12em] text-red-700">Alertas prioritários</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.12em] text-red-700">Alertas prioritarios</p>
           <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {alertas.map((alerta) => (
               <div key={alerta.id} className="rounded-xl bg-white p-3 shadow-sm">
@@ -240,13 +263,13 @@ export function Dashboard() {
               type="text"
               value={busca}
               onChange={(event) => void handleBusca(event.target.value)}
-              placeholder="Buscar por número, cliente ou destinatário"
+              placeholder="Buscar por numero, cliente ou destinatario"
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700"
             />
           </div>
 
           <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Período</p>
+            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Periodo</p>
             <div className="flex flex-wrap gap-2">
               {opcoesPeriodo.map((opcao) => (
                 <button
@@ -286,7 +309,7 @@ export function Dashboard() {
           </div>
 
           <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Ordenação</p>
+            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Ordenacao</p>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
@@ -295,7 +318,7 @@ export function Dashboard() {
                   sortBy === "urgencia" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"
                 }`}
               >
-                Urgência
+                Urgencia
               </button>
               <button
                 type="button"
@@ -323,7 +346,7 @@ export function Dashboard() {
 
       <div className="mb-8 flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-soft">
         <p className="text-sm text-slate-600">
-          Página {paginacao.page} de {paginacao.totalPages} • {paginacao.totalItems} notas encontradas
+          Pagina {paginacao.page} de {paginacao.totalPages} • {paginacao.totalItems} notas encontradas
         </p>
         <div className="flex gap-2">
           <button
@@ -340,7 +363,7 @@ export function Dashboard() {
             onClick={() => void irParaPagina(paginacao.page + 1)}
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 disabled:opacity-40"
           >
-            Próxima
+            Proxima
           </button>
         </div>
       </div>
@@ -349,8 +372,9 @@ export function Dashboard() {
         <div className="rounded-2xl border border-white/70 bg-white p-5 shadow-soft">
           <h2 className="text-lg font-semibold text-slate-900">Entenda as prioridades</h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Vermelho indica atraso. Laranja representa notas que vencem hoje ou amanhã. Amarelo sinaliza
-            vencimento em até três dias. Verde mostra o que ainda está confortável dentro do prazo.
+            Vermelho indica atraso. Laranja representa notas que vencem hoje ou amanha. Amarelo
+            sinaliza vencimento em ate tres dias. Verde mostra o que ainda esta confortavel dentro do
+            prazo.
           </p>
         </div>
         <GraficoSimples resumo={resumo} />

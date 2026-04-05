@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import logoEmpresa from "../assets/logo-empresa.svg";
 import { limparToken } from "../services/api";
 
 interface NavbarProps {
@@ -21,9 +22,9 @@ export function Navbar({ isAuthenticated }: NavbarProps) {
 
   return (
     <header className="border-b border-slate-200 bg-white/80 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-        <Link to={isAuthenticated ? "/" : "/login"} className="text-xl font-bold text-slate-800">
-          Gestão de Notas
+      <div className="mx-auto flex w-full max-w-[1800px] items-center justify-between px-6 py-4 xl:px-10 2xl:px-12">
+        <Link to={isAuthenticated ? "/" : "/login"} className="flex items-center">
+          <img src={logoEmpresa} alt="Logo da empresa" className="h-10 w-auto xl:h-12 2xl:h-14" />
         </Link>
 
         {isAuthenticated ? (

@@ -69,6 +69,40 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 /**
+ * Baixa um arquivo autenticado e preserva o nome enviado pela API.
+ */
+async function requestArquivo(
+  path: string,
+  options: RequestInit = {},
+): Promise<{ blob: Blob; fileName: string; contentType: string }> {
+  const token = obterToken();
+  const headers = new Headers(options.headers);
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers,
+  });
+
+  if (!response.ok) {
+    const errorData = (await response.json().catch(() => ({}))) as { message?: string };
+    throw new Error(errorData.message ?? "Ocorreu um erro na requisição.");
+  }
+
+  const disposition = response.headers.get("Content-Disposition") ?? "";
+  const fileName = disposition.match(/filename="?([^"]+)"?/)?.[1] ?? "exportacao-notas";
+
+  return {
+    blob: await response.blob(),
+    fileName,
+    contentType: response.headers.get("Content-Type") ?? "application/octet-stream",
+  };
+}
+
+/**
  * Cadastra um novo usuário na API.
  */
 export function cadastrar(payload: {
@@ -201,7 +235,7 @@ export function excluirNota(id: string): Promise<void> {
 }
 
 /**
- * Exporta as notas filtradas em formato CSV.
+ * Exporta as notas filtradas no formato escolhido pelo usuário.
  */
 export function exportarNotas(params: {
   periodo: string;
@@ -209,7 +243,8 @@ export function exportarNotas(params: {
   busca: string;
   sortBy: "urgencia" | "prazo" | "cliente" | "chegada";
   sortOrder: "asc" | "desc";
-}): Promise<string> {
+  formato: "pdf" | "csv" | "excel";
+}): Promise<{ blob: Blob; fileName: string; contentType: string }> {
   const query = new URLSearchParams();
 
   Object.entries(params).forEach(([chave, valor]) => {
@@ -220,6 +255,7 @@ export function exportarNotas(params: {
 
   query.set("sortBy", params.sortBy);
   query.set("sortOrder", params.sortOrder);
+  query.set("formato", params.formato);
 
-  return request<string>(`/notas/exportar?${query.toString()}`);
+  return requestArquivo(`/notas/exportar?${query.toString()}`);
 }

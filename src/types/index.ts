@@ -35,6 +35,7 @@ export interface NotaFiscal {
   numero: string;
   cliente: string;
   destinatario: string;
+  observacoes: string | null;
   dataEmissao: string;
   dataChegada: string;
   dataLimite: string;
@@ -88,6 +89,7 @@ export interface NotaPayload {
   numero: string;
   cliente: string;
   destinatario: string;
+  observacoes?: string;
   dataEmissao: string;
   dataChegada: string;
   dataLimite: string;

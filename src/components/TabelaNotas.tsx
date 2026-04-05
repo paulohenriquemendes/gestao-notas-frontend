@@ -9,13 +9,13 @@ interface TabelaNotasProps {
 }
 
 /**
- * Renderiza a tabela principal com detalhes expansíveis e histórico recente da nota.
+ * Renderiza a tabela principal com detalhes expansiveis e historico recente da nota.
  */
 export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
   const [notaExpandida, setNotaExpandida] = useState<string | null>(null);
 
   /**
-   * Alterna a expansão de detalhes da nota.
+   * Alterna a expansao de detalhes da nota.
    */
   function alternarExpansao(id: string) {
     setNotaExpandida((atual) => (atual === id ? null : id));
@@ -32,14 +32,13 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-white/70 bg-white shadow-soft">
       <div className="overflow-x-auto">
-        <table className="min-w-full text-base">
+        <table className="w-full min-w-[1400px] text-base">
           <thead className="bg-slate-100 text-left text-sm font-semibold uppercase tracking-[0.08em] text-slate-600">
             <tr>
               <th className="px-5 py-4">Nota</th>
               <th className="px-5 py-4">Cliente</th>
               <th className="px-5 py-4">Destinatário</th>
               <th className="px-5 py-4">Prazo</th>
-              <th className="px-5 py-4">Indicador</th>
               <th className="px-5 py-4">Status</th>
               <th className="px-5 py-4">Ações</th>
             </tr>
@@ -52,7 +51,6 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
                   <td className="px-5 py-4 text-slate-700">{nota.cliente}</td>
                   <td className="px-5 py-4 text-slate-700">{nota.destinatario}</td>
                   <td className="px-5 py-4 text-slate-700">{formatarData(nota.dataLimite)}</td>
-                  <td className="px-5 py-4 text-base font-semibold text-slate-800">{nota.indicadorPrazo}</td>
                   <td className="px-5 py-4 font-medium text-slate-800">{obterRotuloStatus(nota.status)}</td>
                   <td className="px-5 py-4">
                     <div className="flex flex-wrap gap-2">
@@ -82,7 +80,7 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
 
                 {notaExpandida === nota.id ? (
                   <tr className="border-t border-slate-100 bg-slate-50">
-                    <td colSpan={7} className="px-5 py-5">
+                    <td colSpan={6} className="px-5 py-5">
                       <div className="grid gap-4 lg:grid-cols-[1fr_1.2fr]">
                         <div className="rounded-2xl bg-white p-4">
                           <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-500">
@@ -91,6 +89,7 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
                           <div className="mt-3 grid gap-2 text-sm text-slate-700">
                             <p><strong>Cliente:</strong> {nota.cliente}</p>
                             <p><strong>Destinatário:</strong> {nota.destinatario}</p>
+                            <p><strong>Observações:</strong> {nota.observacoes || "Sem observações."}</p>
                             <p><strong>Emissão:</strong> {formatarData(nota.dataEmissao)}</p>
                             <p><strong>Chegada:</strong> {formatarData(nota.dataChegada)}</p>
                             <p><strong>Prazo:</strong> {formatarData(nota.dataLimite)}</p>
@@ -101,11 +100,11 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
 
                         <div className="rounded-2xl bg-white p-4">
                           <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-slate-500">
-                            Histórico recente
+                            Historico recente
                           </h3>
                           <div className="mt-3 space-y-3">
                             {nota.historicoRecente.length === 0 ? (
-                              <p className="text-sm text-slate-500">Ainda não há registros no histórico.</p>
+                              <p className="text-sm text-slate-500">Ainda nao ha registros no historico.</p>
                             ) : (
                               nota.historicoRecente.map((item) => (
                                 <div key={item.id} className="rounded-xl border border-slate-200 p-3">

@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import logoEmpresa from "../assets/logo-empresa.svg";
 import { cadastrar, forgotPassword, login, resetPassword, salvarToken } from "../services/api";
 
 /**
@@ -104,9 +105,13 @@ export function Login() {
   }
 
   return (
-    <section className="mx-auto flex min-h-[calc(100vh-73px)] max-w-6xl items-center px-4 py-10">
+    <section className="mx-auto flex min-h-[calc(100vh-73px)] w-full max-w-[1800px] items-center px-6 py-10 xl:px-10 2xl:px-12">
       <div className="grid w-full gap-8 rounded-3xl bg-white p-8 shadow-soft lg:grid-cols-[1.05fr_0.95fr]">
         <div className="rounded-3xl bg-slate-900 p-8 text-white">
+          <div className="mb-6 inline-flex rounded-2xl bg-white px-5 py-4">
+            <img src={logoEmpresa} alt="Logo da empresa" className="h-14 w-auto xl:h-16 2xl:h-20" />
+          </div>
+
           <p className="text-sm uppercase tracking-[0.3em] text-brand-100">Operação química</p>
           <h1 className="mt-4 text-4xl font-bold">Controle notas, prazos, alertas e histórico em um só lugar.</h1>
           <p className="mt-4 text-slate-300">
