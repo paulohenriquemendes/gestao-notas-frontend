@@ -253,12 +253,14 @@ export function Dashboard() {
       ) : null}
       */}
 
+      {/*
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <CardResumo titulo="Atrasadas" valor={resumo.atrasadas} destaque="bg-red-100 text-red-700" />
         <CardResumo titulo="Vencendo" valor={resumo.vencendo} destaque="bg-orange-100 text-orange-700" />
         <CardResumo titulo="No prazo" valor={resumo.noPrazo} destaque="bg-green-100 text-green-700" />
         <CardResumo titulo="Total" valor={resumo.total} destaque="bg-slate-100 text-slate-700" />
       </div>
+      */}
 
       <div className="mb-3 rounded-2xl border border-brand-100/70 bg-white/95 p-4 shadow-soft">
         <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
