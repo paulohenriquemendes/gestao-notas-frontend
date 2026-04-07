@@ -36,7 +36,7 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
           <thead className="bg-slate-100 text-left text-sm font-semibold uppercase tracking-[0.08em] text-slate-600">
             <tr>
               <th className="px-5 py-4">Nota</th>
-              <th className="px-5 py-4">Cliente</th>
+              <th className="px-5 py-4">Cidade</th>
               <th className="px-5 py-4">Destinatário</th>
               <th className="px-5 py-4">Prazo</th>
               <th className="px-5 py-4">Status</th>
@@ -88,7 +88,7 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
                           </h3>
                           <div className="mt-3 grid gap-2 text-sm text-slate-700">
                             <p><strong>Cadastrada por:</strong> {nota.criadoPorNome}</p>
-                            <p><strong>Cliente:</strong> {nota.cliente}</p>
+                            <p><strong>Cidade:</strong> {nota.cliente}</p>
                             <p><strong>Destinatário:</strong> {nota.destinatario}</p>
                             <p><strong>Observações:</strong> {nota.observacoes || "Sem observações."}</p>
                             <p><strong>Emissão:</strong> {formatarData(nota.dataEmissao)}</p>

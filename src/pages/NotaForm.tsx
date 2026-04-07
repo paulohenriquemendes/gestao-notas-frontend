@@ -51,7 +51,7 @@ export function NotaForm() {
   }
 
   /**
-   * Carrega sugestoes automaticas de clientes e destinatarios ja utilizados.
+   * Carrega sugestoes automaticas de cidades e destinatarios ja utilizados.
    */
   async function carregarSugestoes() {
     try {
@@ -153,7 +153,7 @@ export function NotaForm() {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Cliente</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Cidade</label>
               <input
                 list="clientes-sugeridos"
                 type="text"
@@ -231,7 +231,7 @@ export function NotaForm() {
 
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 md:col-span-2">
               <strong className="block text-slate-900">Dicas para preenchimento rapido</strong>
-              O sistema reaproveita clientes e destinatarios ja cadastrados. O prazo precisa ser igual ou
+              O sistema reaproveita cidades e destinatarios ja cadastrados. O prazo precisa ser igual ou
               posterior a data de chegada. Use observacoes para registrar orientacoes operacionais.
             </div>
 

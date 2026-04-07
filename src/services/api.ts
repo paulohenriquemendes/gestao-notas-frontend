@@ -202,7 +202,7 @@ export function listarNotas(params: {
 }
 
 /**
- * Busca sugestões de preenchimento para cliente e destinatário.
+ * Busca sugestões de preenchimento para cidade e destinatário.
  */
 export function obterSugestoes(): Promise<SugestoesResponse> {
   return request<SugestoesResponse>("/notas/sugestoes");

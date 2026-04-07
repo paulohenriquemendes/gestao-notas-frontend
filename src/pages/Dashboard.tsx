@@ -237,6 +237,7 @@ export function Dashboard() {
 
       {erro ? <p className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{erro}</p> : null}
 
+      {/* 
       {alertas.length > 0 ? (
         <div className="mb-6 rounded-2xl border border-red-100 bg-red-50 p-4">
           <p className="text-sm font-semibold uppercase tracking-[0.12em] text-red-700">Alertas prioritarios</p>
@@ -250,6 +251,7 @@ export function Dashboard() {
           </div>
         </div>
       ) : null}
+      */}
 
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <CardResumo titulo="Atrasadas" valor={resumo.atrasadas} destaque="bg-red-100 text-red-700" />
@@ -268,7 +270,7 @@ export function Dashboard() {
               type="text"
               value={busca}
               onChange={(event) => void handleBusca(event.target.value)}
-              placeholder="Buscar por numero, cliente ou destinatario"
+              placeholder="Buscar por numero, cidade ou destinatario"
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700"
             />
           </div>
@@ -373,6 +375,7 @@ export function Dashboard() {
         </div>
       </div>
 
+      {/*
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-2xl border border-brand-100/70 bg-white/95 p-5 shadow-soft">
           <h2 className="text-lg font-semibold text-slate-900">Entenda as prioridades</h2>
@@ -384,6 +387,7 @@ export function Dashboard() {
         </div>
         <GraficoSimples resumo={resumo} />
       </div>
+      */}
     </section>
   );
 }
