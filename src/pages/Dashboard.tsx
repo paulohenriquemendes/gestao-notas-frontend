@@ -263,7 +263,7 @@ export function Dashboard() {
       */}
 
       <div className="mb-3 rounded-2xl border border-brand-100/70 bg-white/95 p-4 shadow-soft">
-        <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
+        <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr_1.5fr]">
           <div>
             <label className="mb-1 block text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
               Busca textual
@@ -314,30 +314,6 @@ export function Dashboard() {
                   {opcao.rotulo}
                 </button>
               ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Ordenacao</p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => void atualizarOrdenacao("urgencia", "asc")}
-                className={`rounded-full px-3 py-1.5 text-sm transition ${
-                  sortBy === "urgencia" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"
-                }`}
-              >
-                Urgencia
-              </button>
-              <button
-                type="button"
-                onClick={() => void atualizarOrdenacao("prazo", "asc")}
-                className={`rounded-full px-3 py-1.5 text-sm transition ${
-                  sortBy === "prazo" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"
-                }`}
-              >
-                Prazo
-              </button>
             </div>
           </div>
         </div>
