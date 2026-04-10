@@ -31,7 +31,7 @@ export function TabelaNotas({ notas, onDelete, onEntregue }: TabelaNotasProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-brand-100/70 bg-white/95 shadow-soft">
+    <div className="w-full max-w-[1650px] overflow-hidden rounded-2xl border border-brand-100/70 bg-white/95 shadow-soft">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1400px] text-base">
           <thead className="bg-slate-100 text-left text-sm font-semibold uppercase tracking-[0.08em] text-slate-600">

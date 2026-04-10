@@ -16,7 +16,7 @@ const resumoInicial: DashboardResumo = {
 
 const paginacaoInicial: DashboardPaginacao = {
   page: 1,
-  pageSize: 10,
+  pageSize: 20,
   totalItems: 0,
   totalPages: 1,
 };
@@ -77,7 +77,7 @@ export function Dashboard() {
         visao: visaoAtual,
         busca: buscaAtual,
         page: pageAtual,
-        pageSize: 10,
+        pageSize: 20,
         sortBy: sortByAtual,
         sortOrder: sortOrderAtual,
       });
@@ -379,9 +379,9 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-8 flex justify-center">
         {loading ? (
-          <div className="rounded-2xl bg-white p-8 text-center text-slate-500 shadow-soft">
+          <div className="w-full rounded-2xl bg-white p-8 text-center text-slate-500 shadow-soft">
             Carregando notas fiscais...
           </div>
         ) : (
