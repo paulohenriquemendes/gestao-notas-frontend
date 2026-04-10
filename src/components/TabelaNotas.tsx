@@ -6,12 +6,13 @@ import { formatarData, obterClasseStatus, obterRotuloStatus } from "../utils/dat
 interface TabelaNotasProps {
   notas: NotaFiscal[];
   onDelete: (id: string) => void;
+  onEntregue: (id: string) => void;
 }
 
 /**
  * Renderiza a tabela principal com detalhes expansiveis e historico recente da nota.
  */
-export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
+export function TabelaNotas({ notas, onDelete, onEntregue }: TabelaNotasProps) {
   const [notaExpandida, setNotaExpandida] = useState<string | null>(null);
 
   /**
@@ -67,6 +68,15 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
                       >
                         Editar
                       </Link>
+                      {!nota.arquivada ? (
+                        <button
+                          type="button"
+                          onClick={() => onEntregue(nota.id)}
+                          className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+                        >
+                          Entregue
+                        </button>
+                      ) : null}
                       <button
                         type="button"
                         onClick={() => onDelete(nota.id)}
@@ -94,6 +104,7 @@ export function TabelaNotas({ notas, onDelete }: TabelaNotasProps) {
                             <p><strong>Emissão:</strong> {formatarData(nota.dataEmissao)}</p>
                             <p><strong>Chegada:</strong> {formatarData(nota.dataChegada)}</p>
                             <p><strong>Prazo:</strong> {formatarData(nota.dataLimite)}</p>
+                            <p><strong>Entregue em:</strong> {nota.entregueEm ? formatarData(nota.entregueEm) : "Ainda nao entregue"}</p>
                             <p><strong>Dias desde a chegada:</strong> {nota.diasDesdeChegada}</p>
                             <p><strong>Dias restantes:</strong> {nota.diasRestantes}</p>
                           </div>

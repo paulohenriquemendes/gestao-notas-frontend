@@ -173,6 +173,7 @@ export function obterPerfil(): Promise<AuthProfile> {
 export function listarNotas(params: {
   periodo: string;
   status: string;
+  visao: "ativas" | "arquivadas";
   busca: string;
   page: number;
   pageSize: number;
@@ -216,6 +217,15 @@ export function obterNota(id: string): Promise<NotaFiscal> {
 }
 
 /**
+ * Marca uma nota fiscal como entregue e arquiva o registro.
+ */
+export function marcarNotaComoEntregue(id: string): Promise<NotaFiscal> {
+  return request<NotaFiscal>(`/notas/${id}/entregar`, {
+    method: "POST",
+  });
+}
+
+/**
  * Cria uma nova nota fiscal.
  */
 export function criarNota(payload: NotaPayload): Promise<NotaFiscal> {
@@ -250,6 +260,7 @@ export function excluirNota(id: string): Promise<void> {
 export function exportarNotas(params: {
   periodo: string;
   status: string;
+  visao: "ativas" | "arquivadas";
   busca: string;
   sortBy: "urgencia" | "prazo" | "cliente" | "chegada";
   sortOrder: "asc" | "desc";

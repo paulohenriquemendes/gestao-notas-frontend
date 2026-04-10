@@ -40,6 +40,8 @@ export interface NotaFiscal {
   dataEmissao: string;
   dataChegada: string;
   dataLimite: string;
+  entregueEm: string | null;
+  arquivada: boolean;
   userId: string;
   diasDesdeChegada: number;
   diasRestantes: number;
@@ -81,6 +83,7 @@ export interface DashboardResponse {
     busca: string;
     periodo: string;
     status: string;
+    visao: "ativas" | "arquivadas";
     sortBy: "urgencia" | "prazo" | "cliente" | "chegada";
     sortOrder: "asc" | "desc";
   };

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { CardResumo } from "../components/CardResumo";
 import { GraficoSimples } from "../components/GraficoSimples";
 import { TabelaNotas } from "../components/TabelaNotas";
-import { excluirNota, exportarNotas, listarNotas } from "../services/api";
+import { excluirNota, exportarNotas, listarNotas, marcarNotaComoEntregue } from "../services/api";
 import { mostrarNotificacao } from "../services/notifications";
 import { DashboardAlerta, DashboardPaginacao, DashboardResumo, NotaFiscal } from "../types";
 
@@ -42,6 +42,7 @@ const opcoesStatus = [
 export function Dashboard() {
   const [periodo, setPeriodo] = useState("todos");
   const [status, setStatus] = useState("todos");
+  const [visao, setVisao] = useState<"ativas" | "arquivadas">("ativas");
   const [busca, setBusca] = useState("");
   const [sortBy, setSortBy] = useState<"urgencia" | "prazo" | "cliente" | "chegada">("urgencia");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -60,6 +61,7 @@ export function Dashboard() {
   async function carregarDashboard(
     periodoAtual = periodo,
     statusAtual = status,
+    visaoAtual = visao,
     buscaAtual = busca,
     pageAtual = page,
     sortByAtual = sortBy,
@@ -72,6 +74,7 @@ export function Dashboard() {
       const response = await listarNotas({
         periodo: periodoAtual,
         status: statusAtual,
+        visao: visaoAtual,
         busca: buscaAtual,
         page: pageAtual,
         pageSize: 10,
@@ -96,7 +99,7 @@ export function Dashboard() {
   async function selecionarPeriodo(novoPeriodo: string) {
     setPeriodo(novoPeriodo);
     setPage(1);
-    await carregarDashboard(novoPeriodo, status, busca, 1, sortBy, sortOrder);
+    await carregarDashboard(novoPeriodo, status, visao, busca, 1, sortBy, sortOrder);
   }
 
   /**
@@ -105,7 +108,16 @@ export function Dashboard() {
   async function selecionarStatus(novoStatus: string) {
     setStatus(novoStatus);
     setPage(1);
-    await carregarDashboard(periodo, novoStatus, busca, 1, sortBy, sortOrder);
+    await carregarDashboard(periodo, novoStatus, visao, busca, 1, sortBy, sortOrder);
+  }
+
+  /**
+   * Alterna entre notas ativas e arquivadas.
+   */
+  async function selecionarVisao(novaVisao: "ativas" | "arquivadas") {
+    setVisao(novaVisao);
+    setPage(1);
+    await carregarDashboard(periodo, status, novaVisao, busca, 1, sortBy, sortOrder);
   }
 
   /**
@@ -114,7 +126,7 @@ export function Dashboard() {
   async function handleBusca(valor: string) {
     setBusca(valor);
     setPage(1);
-    await carregarDashboard(periodo, status, valor, 1, sortBy, sortOrder);
+    await carregarDashboard(periodo, status, visao, valor, 1, sortBy, sortOrder);
   }
 
   /**
@@ -126,7 +138,7 @@ export function Dashboard() {
   ) {
     setSortBy(novoSortBy);
     setSortOrder(novaOrdem);
-    await carregarDashboard(periodo, status, busca, page, novoSortBy, novaOrdem);
+    await carregarDashboard(periodo, status, visao, busca, page, novoSortBy, novaOrdem);
   }
 
   /**
@@ -134,7 +146,7 @@ export function Dashboard() {
    */
   async function irParaPagina(novaPagina: number) {
     setPage(novaPagina);
-    await carregarDashboard(periodo, status, busca, novaPagina, sortBy, sortOrder);
+    await carregarDashboard(periodo, status, visao, busca, novaPagina, sortBy, sortOrder);
   }
 
   /**
@@ -143,7 +155,7 @@ export function Dashboard() {
   async function handleExportar(formato: "pdf" | "csv" | "excel") {
     try {
       setExportando(formato);
-      const arquivo = await exportarNotas({ periodo, status, busca, sortBy, sortOrder, formato });
+      const arquivo = await exportarNotas({ periodo, status, visao, busca, sortBy, sortOrder, formato });
       const url = window.URL.createObjectURL(arquivo.blob);
       const link = document.createElement("a");
       link.href = url;
@@ -181,6 +193,26 @@ export function Dashboard() {
     }
   }
 
+  /**
+   * Marca a nota como entregue e move para a lista de arquivadas.
+   */
+  async function handleEntregue(id: string) {
+    const confirmado = window.confirm("Deseja marcar esta nota como entregue? Ela sera movida para Arquivadas.");
+
+    if (!confirmado) {
+      return;
+    }
+
+    try {
+      await marcarNotaComoEntregue(id);
+      await carregarDashboard();
+      mostrarNotificacao("Nota marcada como entregue com sucesso.");
+    } catch (error) {
+      setErro(error instanceof Error ? error.message : "Nao foi possivel marcar a nota como entregue.");
+      mostrarNotificacao("Nao foi possivel marcar a nota como entregue.", "error");
+    }
+  }
+
   useEffect(() => {
     void carregarDashboard();
   }, []);
@@ -192,8 +224,8 @@ export function Dashboard() {
           <div className="max-w-3xl">
             <h1 className="text-3xl font-bold text-slate-900">Dashboard de notas fiscais</h1>
             <p className="mt-2 text-slate-600">
-              As notas aparecem por urgencia, com busca textual, alertas internos, navegacao paginada
-              e exportacao pronta para reunioes e conferencias operacionais.
+              Gerencie notas ativas e arquivadas, com busca textual, navegacao paginada e exportacao
+              pronta para reunioes e conferencias operacionais.
             </p>
           </div>
 
@@ -263,7 +295,35 @@ export function Dashboard() {
       */}
 
       <div className="mb-3 rounded-2xl border border-brand-100/70 bg-white/95 p-4 shadow-soft">
-        <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr_1.5fr]">
+        <div className="grid gap-4 xl:grid-cols-[0.75fr_1.05fr_0.9fr_1.3fr]">
+          <div>
+            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Lista</p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => void selecionarVisao("ativas")}
+                className={`rounded-full px-3 py-1.5 text-sm transition ${
+                  visao === "ativas"
+                    ? "bg-slate-900 text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                Ativas
+              </button>
+              <button
+                type="button"
+                onClick={() => void selecionarVisao("arquivadas")}
+                className={`rounded-full px-3 py-1.5 text-sm transition ${
+                  visao === "arquivadas"
+                    ? "bg-slate-900 text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                Arquivadas
+              </button>
+            </div>
+          </div>
+
           <div>
             <label className="mb-1 block text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
               Busca textual
@@ -325,7 +385,7 @@ export function Dashboard() {
             Carregando notas fiscais...
           </div>
         ) : (
-          <TabelaNotas notas={notas} onDelete={handleDelete} />
+          <TabelaNotas notas={notas} onDelete={handleDelete} onEntregue={handleEntregue} />
         )}
       </div>
 
