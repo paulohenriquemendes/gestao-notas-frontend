@@ -10,6 +10,15 @@ export function formatarData(data: string): string {
 }
 
 /**
+ * Retorna o nome do dia da semana em português brasileiro.
+ */
+export function formatarDiaSemana(data: string): string {
+  return new Intl.DateTimeFormat("pt-BR", {
+    weekday: "long",
+  }).format(new Date(data));
+}
+
+/**
  * Converte uma data ISO para o formato aceito pelo input date.
  */
 export function formatarParaInput(data?: string): string {

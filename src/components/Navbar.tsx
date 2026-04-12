@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logoEmpresa from "../assets/logo-empresa.svg";
-import { limparToken } from "../services/api";
+import { limparToken, obterPerfil } from "../services/api";
 import { mostrarNotificacao } from "../services/notifications";
 
 interface NavbarProps {
@@ -12,6 +13,39 @@ interface NavbarProps {
  */
 export function Navbar({ isAuthenticated }: NavbarProps) {
   const navigate = useNavigate();
+  const [nomeUsuario, setNomeUsuario] = useState("");
+
+  useEffect(() => {
+    let ativo = true;
+
+    /**
+     * Busca o perfil do usuário logado para exibir o nome no topo.
+     */
+    async function carregarPerfil() {
+      if (!isAuthenticated) {
+        setNomeUsuario("");
+        return;
+      }
+
+      try {
+        const perfil = await obterPerfil();
+
+        if (ativo) {
+          setNomeUsuario(perfil.nome);
+        }
+      } catch {
+        if (ativo) {
+          setNomeUsuario("");
+        }
+      }
+    }
+
+    void carregarPerfil();
+
+    return () => {
+      ativo = false;
+    };
+  }, [isAuthenticated]);
 
   /**
    * Remove o token local e redireciona o usuário para a tela de login.
@@ -31,6 +65,11 @@ export function Navbar({ isAuthenticated }: NavbarProps) {
 
         {isAuthenticated ? (
           <div className="flex items-center gap-3">
+            {nomeUsuario ? (
+              <span className="rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700">
+                {nomeUsuario}
+              </span>
+            ) : null}
             <button
               type="button"
               onClick={handleLogout}

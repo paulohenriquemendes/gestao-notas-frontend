@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { NotaFiscal } from "../types";
-import { formatarData, obterClasseStatus, obterRotuloStatus } from "../utils/dateUtils";
+import { formatarData, formatarDiaSemana, obterClasseStatus, obterRotuloStatus } from "../utils/dateUtils";
 
 interface TabelaNotasProps {
   notas: NotaFiscal[];
@@ -51,7 +51,12 @@ export function TabelaNotas({ notas, onDelete, onEntregue }: TabelaNotasProps) {
                   <td className="px-5 py-4 text-base font-semibold text-slate-800">{nota.numero}</td>
                   <td className="px-5 py-4 text-slate-700">{nota.cliente}</td>
                   <td className="px-5 py-4 text-slate-700">{nota.destinatario}</td>
-                  <td className="px-5 py-4 text-slate-700">{formatarData(nota.dataLimite)}</td>
+                  <td className="px-5 py-4 text-slate-700">
+                    <span className="block">{formatarData(nota.dataLimite)}</span>
+                    <span className="mt-1 block text-xs font-medium capitalize text-slate-500">
+                      {formatarDiaSemana(nota.dataLimite)}
+                    </span>
+                  </td>
                   <td className="px-5 py-4 font-medium text-slate-800">{obterRotuloStatus(nota.status)}</td>
                   <td className="px-5 py-4">
                     <div className="flex flex-wrap gap-2">
