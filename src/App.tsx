@@ -1,10 +1,11 @@
 import { ReactElement, useEffect, useState } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { ToastContainer } from "./components/ToastContainer";
 import { Dashboard } from "./pages/Dashboard";
 import { Login } from "./pages/Login";
 import { NotaForm } from "./pages/NotaForm";
+import { NotasTv } from "./pages/NotasTv";
 import { obterEventoAuth, obterToken } from "./services/api";
 
 interface ProtectedRouteProps {
@@ -29,6 +30,8 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
  */
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(obterToken()));
+  const location = useLocation();
+  const isTvRoute = location.pathname.startsWith("/tv/notas");
 
   useEffect(() => {
     const syncAuth = () => {
@@ -47,7 +50,7 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <ToastContainer />
-      <Navbar isAuthenticated={isAuthenticated} />
+      {!isTvRoute ? <Navbar isAuthenticated={isAuthenticated} /> : null}
 
       <Routes>
         <Route
@@ -72,6 +75,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <NotaForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tv/notas"
+          element={
+            <ProtectedRoute>
+              <NotasTv />
             </ProtectedRoute>
           }
         />

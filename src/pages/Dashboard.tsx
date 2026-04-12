@@ -16,7 +16,7 @@ const resumoInicial: DashboardResumo = {
 
 const paginacaoInicial: DashboardPaginacao = {
   page: 1,
-  pageSize: 20,
+  pageSize: 1000,
   totalItems: 0,
   totalPages: 1,
 };
@@ -77,7 +77,7 @@ export function Dashboard() {
         visao: visaoAtual,
         busca: buscaAtual,
         page: pageAtual,
-        pageSize: 20,
+        pageSize: 1000,
         sortBy: sortByAtual,
         sortOrder: sortOrderAtual,
       });
@@ -263,6 +263,12 @@ export function Dashboard() {
             >
               Cadastrar nova nota
             </Link>
+            <Link
+              to="/tv/notas"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Visualizacao TV
+            </Link>
           </div>
         </div>
       </div>
@@ -389,6 +395,7 @@ export function Dashboard() {
         )}
       </div>
 
+      {/*
       <div className="mb-8 flex items-center justify-between rounded-2xl border border-brand-100/70 bg-white/95 px-4 py-3 shadow-soft">
         <p className="text-sm text-slate-600">
           Pagina {paginacao.page} de {paginacao.totalPages} • {paginacao.totalItems} notas encontradas
@@ -412,6 +419,7 @@ export function Dashboard() {
           </button>
         </div>
       </div>
+      */}
 
       {/*
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
