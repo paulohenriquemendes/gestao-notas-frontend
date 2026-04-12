@@ -219,23 +219,23 @@ export function Dashboard() {
 
   return (
     <section className="mx-auto w-full max-w-[1800px] px-6 py-8 xl:px-10 2xl:px-12">
-      <div className="mb-8 rounded-3xl border border-brand-100/70 bg-white/95 p-6 shadow-soft">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
+      <div className="mb-4 rounded-2xl border border-brand-100/70 bg-white/95 p-4 shadow-soft">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div className="max-w-3xl">
-            <h1 className="text-3xl font-bold text-slate-900">Dashboard de notas fiscais</h1>
-            <p className="mt-2 text-slate-600">
-              Gerencie notas ativas e arquivadas, com busca textual, navegacao paginada e exportacao
-              pronta para reunioes e conferencias operacionais.
+            <h1 className="text-2xl font-bold text-slate-900">Dashboard de notas fiscais</h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Gerencie notas ativas e arquivadas, com busca textual e exportação pronta para reuniões
+              e conferências operacionais.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">
+          <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-1.5">
               <button
                 type="button"
                 onClick={() => void handleExportar("pdf")}
                 disabled={exportando !== ""}
-                className="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-60"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
               >
                 {exportando === "pdf" ? "Gerando PDF..." : "Exportar PDF"}
               </button>
@@ -243,7 +243,7 @@ export function Dashboard() {
                 type="button"
                 onClick={() => void handleExportar("csv")}
                 disabled={exportando !== ""}
-                className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:opacity-60"
+                className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-white disabled:opacity-60"
               >
                 CSV
               </button>
@@ -251,7 +251,7 @@ export function Dashboard() {
                 type="button"
                 onClick={() => void handleExportar("excel")}
                 disabled={exportando !== ""}
-                className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:opacity-60"
+                className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-white disabled:opacity-60"
               >
                 Excel
               </button>
@@ -259,13 +259,13 @@ export function Dashboard() {
 
             <Link
               to="/notas/nova"
-              className="inline-flex items-center justify-center rounded-xl bg-brand-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
+              className="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-brand-700"
             >
               Cadastrar nova nota
             </Link>
             <Link
               to="/tv/notas"
-              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
             >
               Visualizacao TV
             </Link>
@@ -300,15 +300,15 @@ export function Dashboard() {
       </div>
       */}
 
-      <div className="mb-3 rounded-2xl border border-brand-100/70 bg-white/95 p-4 shadow-soft">
-        <div className="grid gap-4 xl:grid-cols-[0.75fr_1.05fr_0.9fr_1.3fr]">
+      <div className="mb-3 rounded-2xl border border-brand-100/70 bg-white/95 p-3 shadow-soft">
+        <div className="grid gap-3 xl:grid-cols-[0.75fr_1.05fr_0.9fr_1.3fr]">
           <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Lista</p>
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">Lista</p>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => void selecionarVisao("ativas")}
-                className={`rounded-full px-3 py-1.5 text-sm transition ${
+                className={`rounded-full px-3 py-1 text-xs transition ${
                   visao === "ativas"
                     ? "bg-slate-900 text-white"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -319,7 +319,7 @@ export function Dashboard() {
               <button
                 type="button"
                 onClick={() => void selecionarVisao("arquivadas")}
-                className={`rounded-full px-3 py-1.5 text-sm transition ${
+                className={`rounded-full px-3 py-1 text-xs transition ${
                   visao === "arquivadas"
                     ? "bg-slate-900 text-white"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -331,7 +331,7 @@ export function Dashboard() {
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">
               Busca textual
             </label>
             <input
@@ -339,19 +339,19 @@ export function Dashboard() {
               value={busca}
               onChange={(event) => void handleBusca(event.target.value)}
               placeholder="Buscar por numero, cidade ou destinatario"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700"
             />
           </div>
 
           <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Periodo</p>
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">Periodo</p>
             <div className="flex flex-wrap gap-2">
               {opcoesPeriodo.map((opcao) => (
                 <button
                   key={opcao.valor}
                   type="button"
                   onClick={() => void selecionarPeriodo(opcao.valor)}
-                  className={`rounded-full px-3 py-1.5 text-sm transition ${
+                  className={`rounded-full px-3 py-1 text-xs transition ${
                     periodo === opcao.valor
                       ? "bg-slate-900 text-white"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -364,14 +364,14 @@ export function Dashboard() {
           </div>
 
           <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Status</p>
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">Status</p>
             <div className="flex flex-wrap gap-2">
               {opcoesStatus.map((opcao) => (
                 <button
                   key={opcao.valor}
                   type="button"
                   onClick={() => void selecionarStatus(opcao.valor)}
-                  className={`rounded-full px-3 py-1.5 text-sm transition ${
+                  className={`rounded-full px-3 py-1 text-xs transition ${
                     status === opcao.valor
                       ? "bg-brand-500 text-white"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
