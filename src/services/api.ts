@@ -41,6 +41,17 @@ export function obterEventoAuth(): string {
 }
 
 /**
+ * Encerra a sessao local quando a API informa que o token expirou ou ficou invalido.
+ */
+function tratarSessaoExpirada(): void {
+  limparToken();
+
+  if (window.location.pathname !== "/login") {
+    window.location.replace("/login");
+  }
+}
+
+/**
  * Executa uma requisição HTTP usando o fetch nativo e trata erros de API.
  */
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -62,6 +73,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as { message?: string };
+
+    if (response.status === 401 && path !== "/auth/login") {
+      tratarSessaoExpirada();
+      throw new Error("Sessao expirada. Faca login novamente.");
+    }
     throw new Error(errorData.message ?? "Ocorreu um erro na requisição.");
   }
 
