@@ -95,6 +95,20 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 /**
+ * Executa uma requisicao publica, sem anexar token de autenticacao.
+ */
+async function requestPublico<T>(path: string): Promise<T> {
+  const response = await fetch(`${API_URL}${path}`);
+
+  if (!response.ok) {
+    const errorData = (await response.json().catch(() => ({}))) as { message?: string };
+    throw new Error(errorData.message ?? "Ocorreu um erro na requisicao publica.");
+  }
+
+  return (await response.json()) as T;
+}
+
+/**
  * Baixa um arquivo autenticado e preserva o nome enviado pela API.
  */
 async function requestArquivo(
@@ -216,6 +230,13 @@ export function listarNotas(params: {
   query.set("sortOrder", params.sortOrder);
 
   return request<DashboardResponse>(`/notas?${query.toString()}`);
+}
+
+/**
+ * Busca notas ativas para a visualizacao publica da TV, sem exigir login.
+ */
+export function listarNotasTvPublicas(): Promise<{ notas: NotaFiscal[]; atualizadoEm: string }> {
+  return requestPublico<{ notas: NotaFiscal[]; atualizadoEm: string }>("/notas/tv-publica");
 }
 
 /**

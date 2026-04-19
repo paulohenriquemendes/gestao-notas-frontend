@@ -80,11 +80,7 @@ export default function App() {
         />
         <Route
           path="/tv/notas"
-          element={
-            <ProtectedRoute>
-              <NotasTv />
-            </ProtectedRoute>
-          }
+          element={<NotasTv />}
         />
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
       </Routes>

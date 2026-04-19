@@ -1,8 +1,23 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listarNotas } from "../services/api";
+import { listarNotasTvPublicas } from "../services/api";
 import { NotaFiscal } from "../types";
-import { formatarData, formatarDiaSemana, obterClasseStatus, obterRotuloStatus } from "../utils/dateUtils";
+import { formatarData, formatarDiaSemana, obterRotuloStatus } from "../utils/dateUtils";
+
+/**
+ * Retorna cores mais saturadas para melhorar a leitura em Smart TV.
+ */
+function obterClasseStatusTv(status: NotaFiscal["status"]): string {
+  const mapa: Record<NotaFiscal["status"], string> = {
+    atrasada: "bg-red-300",
+    venceHoje: "bg-orange-300",
+    venceAmanha: "bg-orange-300",
+    venceEm3Dias: "bg-yellow-300",
+    dentroPrazo: "bg-emerald-300",
+  };
+
+  return mapa[status];
+}
 
 /**
  * Exibe somente a listagem de notas para uso em Smart TV ou monitor operacional.
@@ -19,16 +34,7 @@ export function NotasTv() {
   async function carregarNotasTv() {
     try {
       setErro("");
-      const response = await listarNotas({
-        periodo: "todos",
-        status: "todos",
-        visao: "ativas",
-        busca: "",
-        page: 1,
-        pageSize: 1000,
-        sortBy: "urgencia",
-        sortOrder: "asc",
-      });
+      const response = await listarNotasTvPublicas();
 
       setNotas(response.notas);
     } catch (error) {
@@ -88,7 +94,7 @@ export function NotasTv() {
             </thead>
             <tbody className="text-xl font-semibold text-slate-900 2xl:text-2xl">
               {notas.map((nota) => (
-                <tr key={nota.id} className={`border-b-2 border-white/80 ${obterClasseStatus(nota.status)}`}>
+                <tr key={nota.id} className={`border-b-2 border-white/90 ${obterClasseStatusTv(nota.status)}`}>
                   <td className="px-4 py-5">{nota.numero}</td>
                   <td className="px-4 py-5">{nota.cliente}</td>
                   <td className="truncate px-4 py-5">{nota.destinatario}</td>
